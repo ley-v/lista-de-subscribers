@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.a02crudcomroom.R
 import com.example.a02crudcomroom.data.db.AppDatabase
+import com.example.a02crudcomroom.extension.navigateWithAnimations
 import com.example.a02crudcomroom.repository.DatabaseDataSource
 import com.example.a02crudcomroom.repository.SubscriberRepository
 import kotlinx.android.synthetic.main.subscriber_list_fragment.*
@@ -55,7 +56,10 @@ class SubscriberListFragment : Fragment(R.layout.subscriber_list_fragment) {
             // navigate, podemos conferir apertando ctrl + nome do fragment
             //ps: a forma recomendada(que será visto depois) é fazer a ligação de uma tela para a outra e navegar usando o id dessa
             // 'ação'(<action>)
-            findNavController().navigate(R.id.subscriberFragment)
+//            findNavController().navigate(R.id.subscriberFragment)
+            //se para essa tela em específico quiséssemos criar um novo tipo de transição, poderíamos criá-lo e passar como segundo
+            // argumento
+            findNavController().navigateWithAnimations(R.id.subscriberFragment)
         }
     }
 }

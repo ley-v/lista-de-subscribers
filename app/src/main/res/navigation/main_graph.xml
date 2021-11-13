@@ -10,7 +10,9 @@
     <fragment
         android:id="@+id/subscriberListFragment"
         android:name="com.example.a02crudcomroom.ui.subscriberlist.SubscriberListFragment"
-        android:label="SubscriberListFragment" />
+        android:label="@string/subscriber_list_title"
+        tools:layout="@layout/subscriber_list_fragment"
+        />
     <fragment
         android:id="@+id/subscriberFragment"
         android:name="com.example.a02crudcomroom.ui.subscriber.SubscriberFragment"
