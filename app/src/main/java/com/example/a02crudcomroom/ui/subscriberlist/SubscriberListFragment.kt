@@ -36,6 +36,11 @@ class SubscriberListFragment : Fragment(R.layout.subscriber_list_fragment) {
         configureViewListeners()
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.getAllSubscribers()
+    }
+
     private fun observeViewModelEvents() {
         viewModel.allSubscribersEvent.observe(viewLifecycleOwner, Observer { allSubscribers ->
             val subscriberListAdapter = SubscriberListAdapter(allSubscribers)
@@ -48,7 +53,7 @@ class SubscriberListFragment : Fragment(R.layout.subscriber_list_fragment) {
         })
     }
 
-    private fun configureViewListeners(){
+    private fun configureViewListeners() {
         fabAddSubscriber.setOnClickListener {
             //Aqui chamamos a função de navegação do navigation controller
             //A view consegue encontrar o findNavController pq está dentro de uma activity que tem configurado o fragment container

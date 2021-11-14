@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.a02crudcomroom.R
 import com.example.a02crudcomroom.data.db.AppDatabase
 import com.example.a02crudcomroom.data.db.dao.SubscriberDao
@@ -74,6 +75,10 @@ class SubscriberFragment : Fragment(R.layout.subscriber_fragment) {
                     clearFields()
                     //esse código forçará o teclado desaparecer quando voltar para a tela de listagem de usuário
                     hideKeyboard()
+
+                    requireView().requestFocus()
+                    //para voltar a tela anterior utilizando o componente de navegação
+                    findNavController().popBackStack()
                 }
             }
 

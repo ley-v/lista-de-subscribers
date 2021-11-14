@@ -5,5 +5,5 @@
     <!-- tela atual sai pela esquerda <<< -->
     <translate android:fromXDelta="0%" android:toXDelta="-100%"
         android:fromYDelta="0%" android:toYDelta="0%"
-        android:duration="2500"/>
+        android:duration="250"/>
 </set>

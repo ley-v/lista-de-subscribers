@@ -27,5 +27,6 @@ interface SubscriberDao {
     //toda vez que for inserido ou atualizado alguma coisa no banco de dados automaticamente será disparado o evento e quem estiver
     //escutando o liveData vai reagir a esse evento e vai atualizar na tela pro usuário de forma automática
     //A função não precisa ser suspend quando retorna um LiveData
-    fun getAll(): LiveData<List<SubscriberEntity>>
+//    fun getAll(): LiveData<List<SubscriberEntity>>
+    suspend fun getAll(): List<SubscriberEntity>
 }
