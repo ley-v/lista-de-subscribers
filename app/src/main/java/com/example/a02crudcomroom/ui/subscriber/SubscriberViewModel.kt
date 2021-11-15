@@ -23,7 +23,30 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
     val messageEventData: LiveData<Int>
         get() = _messageEventData
 
-    fun addSubscribe(name: String, email: String) {
+    fun addOrUpdateSubscriber(name: String, email: String, id: Long = 0) {
+        //se o id passado for maior que 0 significa que se trata de uma atualização, senão trata-se de uma inserção
+        if (id > 0) {
+            updateSubscribe(id, name, email)
+        } else {
+            insertSubscribe(name, email)
+        }
+    }
+
+    private fun updateSubscribe(id: Long, name: String, email: String) = viewModelScope.launch {
+        try {
+            repository.updateSubscriber(id, name, email)
+            _subscriberStateEventData.value = SubscriberState.Updated
+            _messageEventData.value = R.string.subscriber_updated_successfully
+
+
+        } catch (ex: Exception) {
+            _messageEventData.value = R.string.subscriber_error_to_insert
+            Log.e(TAG, ex.toString())
+        }
+    }
+
+    //    fun addSubscribe(name: String, email: String) {  ---renomeado para:
+    private fun insertSubscribe(name: String, email: String) {
         //essa é uma extension do lifecycle. Aqui iniciamos um escopo de coroutines com ciclo de vida, que é gerenciado
         // automaticamente pelo viewmodel e pela view. Assim não precisamos nos preocupar em ficar limpando a memória quando o
         // app é destruído ou colocado em background, por ex.
@@ -43,7 +66,7 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
                 }
             } catch (e: Exception) {
                 //caso aconteça algum erro iremos otificar o usuário
-                    _messageEventData.value = R.string.subscriber_error_to_insert
+                _messageEventData.value = R.string.subscriber_error_to_insert
                 Log.e(TAG, e.toString())
             }
         }
@@ -54,9 +77,11 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
     // de inserção/atualização/delete etc. Ou seja, a sealed class foi criada para representar o estado da view
     sealed class SubscriberState {
         object Inserted : SubscriberState()
+        object Updated : SubscriberState()
     }
 
     companion object {
+        //TAG = SubscriberViewModel
         private val TAG = SubscriberViewModel::class.java.simpleName
     }
 

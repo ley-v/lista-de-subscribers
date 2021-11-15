@@ -1,17 +1,14 @@
 package com.example.a02crudcomroom.ui.subscriber
 
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.a02crudcomroom.R
 import com.example.a02crudcomroom.data.db.AppDatabase
 import com.example.a02crudcomroom.data.db.dao.SubscriberDao
@@ -50,10 +47,23 @@ class SubscriberFragment : Fragment(R.layout.subscriber_fragment) {
 //        return inflater.inflate(R.layout.subscriber_fragment, container, false)
 //    }
 
+    //o 'SubscriberFragmentArgs' foi gerado automaticamente assim como o directions pelo xml do navigate
+    //com essa implementação iremos automaticamente receber o objeto passado como argumento na tela anterior
+    private val args: SubscriberFragmentArgs by navArgs()
 
     //o 'onViewCreated' é executado depois que a view tiver sido criada
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        //aqui preencheremos o campo de texto com os valores recebidos pelo 'SubscriberFragmentArgs'
+        //somente se o args não for nulo, que é o caso do click ser feito num item da lista e não no fab, o que seria o caso
+        // de um update, que preencheremos os campos
+        args.subscriberArgument?.let { subscriber ->
+            //caso seja um update mudaremos o nome do botão 'Add' para 'Update'
+            button_subscriber.text = getString(R.string.subscriber_button_update)
+            input_name.setText(subscriber.name)
+            input_email.setText(subscriber.email)
+        }
+
         //essa função irá observar os eventos do viewModel/ escutar os liveDatas
         observeEvents()
         //é aqui dentro que iremos definir os listeners das views
@@ -63,14 +73,16 @@ class SubscriberFragment : Fragment(R.layout.subscriber_fragment) {
 
     //privada pq apenas o fragment terá acesso
     private fun observeEvents() {
-    //devemos passar o 'viewLifecycleOwner' para o melhor gerenciamento do ciclo de vida
-        viewModel.subscriberStateEventData.observe(viewLifecycleOwner){ subscriberState: SubscriberViewModel.SubscriberState ->
-    //para trabalhar com o sealed class(padrão mvi) agora é mais fácil pois só temos que manipular uma única função, e dentro desta
-    // nós temos um panorama geral dos eventos da nossa aplicação, do que está acontecendo. Aqui vamos começar a escutar aqueles
-    // estados
-            when(subscriberState){
+        //devemos passar o 'viewLifecycleOwner' para o melhor gerenciamento do ciclo de vida
+        viewModel.subscriberStateEventData.observe(viewLifecycleOwner) { subscriberState: SubscriberViewModel.SubscriberState ->
+            //para trabalhar com o sealed class(padrão mvi) agora é mais fácil pois só temos que manipular uma única função, e dentro desta
+            // nós temos um panorama geral dos eventos da nossa aplicação, do que está acontecendo. Aqui vamos começar a escutar aqueles
+            // estados
+            when (subscriberState) {
                 //quando o estado desse evento for do tipo 'SubscriberViewModel.SubscriberState.Inserted'
-                is SubscriberViewModel.SubscriberState.Inserted -> {
+                is SubscriberViewModel.SubscriberState.Inserted,
+                is SubscriberViewModel.SubscriberState.Updated
+                -> {
                     //após uma inserção com sucesso vamos limpar os campos
                     clearFields()
                     //esse código forçará o teclado desaparecer quando voltar para a tela de listagem de usuário
@@ -83,8 +95,8 @@ class SubscriberFragment : Fragment(R.layout.subscriber_fragment) {
             }
 
         }
-        viewModel.messageEventData.observe(viewLifecycleOwner){ stringResId ->
-            Snackbar.make(requireView(), stringResId,Snackbar.LENGTH_LONG).show()
+        viewModel.messageEventData.observe(viewLifecycleOwner) { stringResId ->
+            Snackbar.make(requireView(), stringResId, Snackbar.LENGTH_LONG).show()
 //            Toast.makeText(activity, "a", Toast.LENGTH_SHORT).show()
         }
     }
@@ -99,7 +111,7 @@ class SubscriberFragment : Fragment(R.layout.subscriber_fragment) {
         //em primeiro lugar vamos recuperar a activity. Com o 'requireActivity' obtemos a instância da activity
         val parentActivity = requireActivity()
         //verificamos de o 'parentActivity' é do tipo 'AppCompatActivity' para podermos chamar a extensions
-        if(parentActivity is AppCompatActivity){
+        if (parentActivity is AppCompatActivity) {
             //ps: todas as extensões convém ser criadas numa pasta específica
             parentActivity.hideKeyboard()
         }
@@ -113,7 +125,9 @@ class SubscriberFragment : Fragment(R.layout.subscriber_fragment) {
             val name = input_name.text.toString()
             val email = input_email.text.toString()
 
-        viewModel.addSubscribe(name, email)
+            //sempre que houver um valor no args ele será repassado, senão, utilizando o elvis operator(operador ternário?),
+            // se for nulo passaremos o valor 0
+            viewModel.addOrUpdateSubscriber(name, email, args.subscriberArgument?.id ?: 0)
         }
 
     }

@@ -11,11 +11,20 @@
         android:id="@+id/subscriberListFragment"
         android:name="com.example.a02crudcomroom.ui.subscriberlist.SubscriberListFragment"
         android:label="@string/subscriber_list_title"
-        tools:layout="@layout/subscriber_list_fragment"
-        />
+        tools:layout="@layout/subscriber_list_fragment">
+        <action
+            android:id="@+id/action_subscriberListFragment_to_subscriberFragment"
+            app:destination="@id/subscriberFragment" />
+    </fragment>
     <fragment
         android:id="@+id/subscriberFragment"
         android:name="com.example.a02crudcomroom.ui.subscriber.SubscriberFragment"
         android:label="@string/subscriber_title"
-        tools:layout="@layout/subscriber_fragment" />
+        tools:layout="@layout/subscriber_fragment">
+        <argument
+            android:name="subscriberArgument"
+            android:defaultValue="@null"
+            app:argType="com.example.a02crudcomroom.data.db.entity.SubscriberEntity"
+            app:nullable="true" />
+    </fragment>
 </navigation>

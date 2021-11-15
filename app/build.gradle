@@ -3,6 +3,8 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-android-extensions'
     id 'kotlin-kapt'
+    //dependência necessária para poder gerar o 'FragmentDirections'
+    id 'androidx.navigation.safeargs.kotlin'
 }
 
 android {

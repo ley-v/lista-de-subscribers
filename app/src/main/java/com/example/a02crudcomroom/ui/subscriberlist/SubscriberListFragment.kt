@@ -43,7 +43,23 @@ class SubscriberListFragment : Fragment(R.layout.subscriber_list_fragment) {
 
     private fun observeViewModelEvents() {
         viewModel.allSubscribersEvent.observe(viewLifecycleOwner, Observer { allSubscribers ->
-            val subscriberListAdapter = SubscriberListAdapter(allSubscribers)
+            val subscriberListAdapter = SubscriberListAdapter(allSubscribers).apply {
+                onItemClick = { subscribers ->
+                    //quando clicamos num item utilizamos o directions para navegação, mas não precisariamos usar o navdirections
+                    // para navegação só por causa do argumento, pois o argumento já foi definido como nulo por default no
+                    // gráfico de navegação. É o caso de inserção de um novo subscriber, lá embaixo, quando implementamos o
+                    // 'fabAddSubscriber' não estamos utilizando o directions para navegação, lá estamos usando apenas o id do
+                    // fragment
+                    val directions = SubscriberListFragmentDirections
+                            //esse método é gerado com base na ação criada no gráfico de navegação
+                            //passando o argumento que definimos no nav_graph, ele transporta para o fragmento de destino(igual
+                            // um putExtra)
+                        .actionSubscriberListFragmentToSubscriberFragment(subscribers)
+                    //com o directions criado apenas precisamos passá-lo como argumento do navigate
+                    //findNavController().navigate(directions)
+                    findNavController().navigateWithAnimations(directions)
+                }
+            }
 
             with(recycler_subscribers) {
                 //para otimizar o recyclerview, aqui estamos dizendo que todos os itens tem o mesmo tamanho
@@ -64,7 +80,9 @@ class SubscriberListFragment : Fragment(R.layout.subscriber_list_fragment) {
 //            findNavController().navigate(R.id.subscriberFragment)
             //se para essa tela em específico quiséssemos criar um novo tipo de transição, poderíamos criá-lo e passar como segundo
             // argumento
-            findNavController().navigateWithAnimations(R.id.subscriberFragment)
+//            findNavController().navigateWithAnimations(R.id.subscriberFragment)
+            //para padronizar, podemos utilizar a ação de navegação ao invés do id do fragment
+            findNavController().navigateWithAnimations(R.id.action_subscriberListFragment_to_subscriberFragment)
         }
     }
 }
