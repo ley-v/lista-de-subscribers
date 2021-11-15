@@ -38,8 +38,8 @@ class SubscriberFragment : Fragment(R.layout.subscriber_fragment) {
         }
     }
 
-    //o 'onCreateView' apenas retorna uma view inflada. Se não for necessário colocar nenhum código de configuração no onCreateView,
-    // podemos simplemente pegar a referência de layout e passá-la diretamente como argumento do fragment
+    //o 'onCreateView' apenas retorna uma view inflada. Se não for necessário colocar nenhum código de configuração no
+    // onCreateView podemos simplemente pegar a referência de layout e passá-la diretamente como argumento do fragment
 //    override fun onCreateView(
 //        inflater: LayoutInflater, container: ViewGroup?,
 //        savedInstanceState: Bundle?
@@ -62,6 +62,8 @@ class SubscriberFragment : Fragment(R.layout.subscriber_fragment) {
             button_subscriber.text = getString(R.string.subscriber_button_update)
             input_name.setText(subscriber.name)
             input_email.setText(subscriber.email)
+
+            button_delete.visibility = View.VISIBLE
         }
 
         //essa função irá observar os eventos do viewModel/ escutar os liveDatas
@@ -81,8 +83,8 @@ class SubscriberFragment : Fragment(R.layout.subscriber_fragment) {
             when (subscriberState) {
                 //quando o estado desse evento for do tipo 'SubscriberViewModel.SubscriberState.Inserted'
                 is SubscriberViewModel.SubscriberState.Inserted,
-                is SubscriberViewModel.SubscriberState.Updated
-                -> {
+                is SubscriberViewModel.SubscriberState.Updated,
+                is SubscriberViewModel.SubscriberState.Deleted -> {
                     //após uma inserção com sucesso vamos limpar os campos
                     clearFields()
                     //esse código forçará o teclado desaparecer quando voltar para a tela de listagem de usuário
@@ -128,6 +130,10 @@ class SubscriberFragment : Fragment(R.layout.subscriber_fragment) {
             //sempre que houver um valor no args ele será repassado, senão, utilizando o elvis operator(operador ternário?),
             // se for nulo passaremos o valor 0
             viewModel.addOrUpdateSubscriber(name, email, args.subscriberArgument?.id ?: 0)
+        }
+
+        button_delete.setOnClickListener {
+            viewModel.removeSubscriber(args.subscriberArgument?.id ?: 0)
         }
 
     }

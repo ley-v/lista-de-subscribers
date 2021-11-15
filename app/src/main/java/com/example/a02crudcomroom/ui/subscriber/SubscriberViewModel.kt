@@ -40,7 +40,7 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
 
 
         } catch (ex: Exception) {
-            _messageEventData.value = R.string.subscriber_error_to_insert
+            _messageEventData.value = R.string.subscriber_error_to_update
             Log.e(TAG, ex.toString())
         }
     }
@@ -72,12 +72,28 @@ class SubscriberViewModel(private val repository: SubscriberRepository) : ViewMo
         }
     }
 
+    fun removeSubscriber(id: Long) = viewModelScope.launch {
+        try {
+            if (id > 0) {
+                repository.deleteSubscriber(id)
+                _subscriberStateEventData.value = SubscriberState.Deleted
+                _messageEventData.value = R.string.subscriber_deleted_successfully
+            }
+        } catch (e: Exception) {
+            _messageEventData.value = R.string.subscriber_deleted_successfully
+            Log.e(TAG, e.toString())
+        }
+    }
+
     //Essa sealed class foi criada para lidar com os estados de uma forma mais fácil. Com ela definimos apenas um ponto para
     // observar as notificações dos eventos, e olhando o código podemos perceber em qual ponto estamos trabalhando com o estado
     // de inserção/atualização/delete etc. Ou seja, a sealed class foi criada para representar o estado da view
     sealed class SubscriberState {
         object Inserted : SubscriberState()
         object Updated : SubscriberState()
+        object Deleted : SubscriberState() {
+
+        }
     }
 
     companion object {
